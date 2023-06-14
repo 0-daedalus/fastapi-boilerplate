@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, status
-
+from typing import Optional
 from app.utils import AppModel
 
 from ..service import Service, get_service
@@ -9,9 +9,9 @@ from . import router
 class RegisterUserRequest(AppModel):
     email: str
     password: str
-    phone: str
-    name: str
-    city: str
+    phone: Optional[str]
+    name: Optional[str]
+    city: Optional[str]
 
 
 class RegisterUserResponse(AppModel):
