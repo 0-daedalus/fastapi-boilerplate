@@ -12,7 +12,7 @@ class DeleteImagesRequest(AppModel):
     media: List[str]
 
 
-@router.delete("{/shanyrak_id}/media")
+@router.delete("/{id}/media")
 def delete_images(
     shanyrak_id: str,
     filenames: DeleteImagesRequest,

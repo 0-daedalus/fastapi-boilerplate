@@ -1,5 +1,6 @@
 from bson.objectid import ObjectId
 from pymongo.database import Database
+from datetime import datetime
 
 
 class ShanyraksRepository:
@@ -16,6 +17,7 @@ class ShanyraksRepository:
             "rooms_count": shanyrak["rooms_count"],
             "description": shanyrak["description"],
             "image_urls": [],
+            "comments": [],
         }
         newShanyrak = self.database["shanyraks"].insert_one(payload)
         return newShanyrak.inserted_id
@@ -57,7 +59,7 @@ class ShanyraksRepository:
         self.database["shanyraks"].delete_one({"_id": ObjectId(shanyrak_id)})
 
     def add_image_to_shanyrak(self, shanyrak_id: str, image_url: str):
-        curr = ShanyraksRepository.get_shanyrakObj_by_id(self, shanyrak_id)
+        curr = ShanyraksRepository.get_shanyrak_by_id(self, shanyrak_id)
         currUrl = curr["image_urls"]
         if image_url in currUrl:
             return -1
@@ -73,3 +75,47 @@ class ShanyraksRepository:
             self.database["shanyraks"].update_one(
                 {"_id": ObjectId(shanyrak_id)}, {"$pull": {"image_urls": filename}}
             )
+
+    def create_comment(self, shanyrak_id: str, user_id: str, content: str):
+        curr = ShanyraksRepository.get_shanyrak_by_id(self, shanyrak_id)
+        currComments = curr["comments"]
+        newComment = {
+            "_id": ObjectId(),
+            "content": content,
+            "created_at": datetime.utcnow(),
+            "author_id": user_id,
+        }
+        payload = currComments
+        payload.append(newComment)
+        self.database["shanyraks"].update_one(
+            {"_id": ObjectId(shanyrak_id)}, {"$set": {"comments": payload}}
+        )
+        return str(newComment["_id"])
+
+    def get_comments_by_id(self, shanyrak_id: str):
+        shanyrak = self.database["shanyraks"].find_one({"_id": ObjectId(shanyrak_id)})
+        return shanyrak["comments"]
+
+    def update_comment(self, shanyrak_id: str, comment_id: str, content: str):
+        comments = ShanyraksRepository.get_comments_by_id(self, shanyrak_id)
+        for comment in comments:
+            if comment["_id"] == ObjectId(comment_id):
+                newComment = comment
+                newComment["content"] = content
+                newComment["created_at"] = datetime.utcnow()
+                i = comments.index(comment)
+                comments.pop(i)
+                comments.insert(i, newComment)
+                self.database["shanyraks"].update_one(
+                    {"_id": ObjectId(shanyrak_id)}, {"$set": {"comments": comments}}
+                )
+
+    def delete_comment(self, shanyrak_id: str, comment_id: str):
+        comments = ShanyraksRepository.get_comments_by_id(self, shanyrak_id)
+        for comment in comments:
+            if comment["_id"] == ObjectId(comment_id):
+                i = comments.index(comment)
+                comments.pop(i)
+                self.database["shanyraks"].update_one(
+                    {"_id": ObjectId(shanyrak_id)}, {"$set": {"comments": comments}}
+                )

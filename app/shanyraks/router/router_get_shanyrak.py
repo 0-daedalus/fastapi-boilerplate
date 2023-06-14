@@ -23,7 +23,7 @@ class GetShanyrakResponse(AppModel):
     media: List[str]
 
 
-@router.get("/", response_model=GetShanyrakResponse)
+@router.get("/{id}", response_model=GetShanyrakResponse)
 def get_my_data(
     shanyrak_id: str,
     jwt_data: JWTData = Depends(parse_jwt_user_data),

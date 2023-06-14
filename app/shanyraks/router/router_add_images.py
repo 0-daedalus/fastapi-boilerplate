@@ -5,7 +5,7 @@ from ..service import Service, get_service
 from . import router
 
 
-@router.post("{/shanyrak_id}/media")
+@router.post("/{id}/media")
 def add_images(
     shanyrak_id: str, files: List[UploadFile], svc: Service = Depends(get_service)
 ):
