@@ -15,20 +15,19 @@ class ShanyraksRepository:
             "area": shanyrak["area"],
             "rooms_count": shanyrak["rooms_count"],
             "description": shanyrak["description"],
-            "image_url": "",
+            "image_urls": [],
         }
         newShanyrak = self.database["shanyraks"].insert_one(payload)
         return newShanyrak.inserted_id
 
-    def get_shanyrakObj_by_id(self, shanyrak_id):
+    def get_shanyrak_by_id(self, shanyrak_id):
         return self.database["shanyraks"].find_one({"_id": ObjectId(shanyrak_id)})
 
     def get_shanyrak_info(self, shanyrak_id):
         item = self.database["shanyraks"].find_one({"_id": ObjectId(shanyrak_id)})
-        media = []
-        media = item["image_url"].strip().split(" ")
-        print(media)
+        media = item["image_urls"]
         payload = {
+            "id": item["_id"],
             "type": item["type"],
             "price": item["price"],
             "address": item["address"],
@@ -59,11 +58,18 @@ class ShanyraksRepository:
 
     def add_image_to_shanyrak(self, shanyrak_id: str, image_url: str):
         curr = ShanyraksRepository.get_shanyrakObj_by_id(self, shanyrak_id)
-        currStr = curr["image_url"]
-        if image_url in currStr:
+        currUrl = curr["image_urls"]
+        if image_url in currUrl:
             return -1
-        payload = {"image_url": str(currStr + " " + image_url)}
+        payload = currUrl
+        payload.append(image_url)
         self.database["shanyraks"].update_one(
-            {"_id": ObjectId(shanyrak_id)}, {"$set": payload}
+            {"_id": ObjectId(shanyrak_id)}, {"$set": {"image_urls": payload}}
         )
         return 0
+
+    def delete_images(self, shanyrak_id: str, filenames):
+        for filename in filenames:
+            self.database["shanyraks"].update_one(
+                {"_id": ObjectId(shanyrak_id)}, {"$pull": {"image_urls": filename}}
+            )
