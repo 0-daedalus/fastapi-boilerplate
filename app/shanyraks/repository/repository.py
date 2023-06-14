@@ -15,6 +15,7 @@ class ShanyraksRepository:
             "area": shanyrak["area"],
             "rooms_count": shanyrak["rooms_count"],
             "description": shanyrak["description"],
+            "image_url": "",
         }
         newShanyrak = self.database["shanyraks"].insert_one(payload)
         return newShanyrak.inserted_id
