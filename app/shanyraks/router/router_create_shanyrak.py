@@ -1,6 +1,6 @@
 from fastapi import Depends, status
 from pydantic import Field
-from typing import Any
+from typing import Any, Optional
 
 from app.utils import AppModel
 
@@ -15,8 +15,8 @@ class CreateShanyrakRequest(AppModel):
     price: int
     address: str
     area: float
-    rooms_count: int
-    description: str
+    rooms_count: Optional[int] = 1
+    description: Optional[str] = ""
 
 
 class CreateShanyrakResponse(AppModel):

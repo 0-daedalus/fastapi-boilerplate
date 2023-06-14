@@ -1,5 +1,5 @@
 from fastapi import Depends, Response
-
+from typing import Optional
 from app.utils import AppModel
 
 from ..service import Service, get_service
@@ -13,8 +13,8 @@ class UpdateShanyrakRequest(AppModel):
     price: int
     address: str
     area: float
-    rooms_count: int
-    description: str
+    rooms_count: Optional[int] = 1
+    description: Optional[str] = ""
 
 
 class UpdateShanyrakResponse(AppModel):
