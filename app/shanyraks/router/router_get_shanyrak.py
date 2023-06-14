@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 from fastapi import Depends
 from pydantic import Field
@@ -20,6 +20,7 @@ class GetShanyrakResponse(AppModel):
     rooms_count: int
     description: str
     user_id: Any
+    media: List[str]
 
 
 @router.get("/", response_model=GetShanyrakResponse)
@@ -28,5 +29,5 @@ def get_my_data(
     jwt_data: JWTData = Depends(parse_jwt_user_data),
     svc: Service = Depends(get_service),
 ) -> dict[str, str]:
-    entry = svc.repository.get_shanyrak_by_id(shanyrak_id)
+    entry = svc.repository.get_shanyrak_info(shanyrak_id)
     return GetShanyrakResponse(**entry)
