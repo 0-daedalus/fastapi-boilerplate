@@ -80,7 +80,7 @@ class ShanyraksRepository:
         curr = ShanyraksRepository.get_shanyrak_by_id(self, shanyrak_id)
         currComments = curr["comments"]
         newComment = {
-            "_id": str(ObjectId()),
+            "_id": ObjectId(),
             "content": content,
             "created_at": datetime.utcnow(),
             "author_id": user_id,
