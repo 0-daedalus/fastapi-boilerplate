@@ -94,6 +94,7 @@ class ShanyraksRepository:
 
     def get_comments_by_id(self, shanyrak_id: str):
         shanyrak = self.database["shanyraks"].find_one({"_id": ObjectId(shanyrak_id)})
+        print(str(shanyrak))
         return shanyrak["comments"]
 
     def update_comment(self, shanyrak_id: str, comment_id: str, content: str):

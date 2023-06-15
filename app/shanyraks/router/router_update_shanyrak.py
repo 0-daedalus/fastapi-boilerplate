@@ -26,8 +26,8 @@ class UpdateShanyrakResponse(AppModel):
     description: str
 
 
-@router.patch("{/:shanyrak_id}", response_model=UpdateShanyrakResponse)
-def update_my_account(
+@router.patch("/{shanyrak_id}", response_model=UpdateShanyrakResponse)
+def update_shanyrak(
     shanyrak_id: str,
     input: UpdateShanyrakRequest,
     svc: Service = Depends(get_service),
